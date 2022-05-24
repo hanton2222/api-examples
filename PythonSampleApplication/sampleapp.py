@@ -28,46 +28,41 @@ def create_authenticated_http_session(client_id, client_secret) -> requests.Sess
     )
     return session
 
+def get_customer_information(http_session: requests.Session):
+    response_object = http_session.get(f"{api_url}/api/v2/Customers")
+    response = handle_response_error(response_object)
+    return response
 
-def get_customer_information(http_session: requests.Session, customerid):
-    response_object = http_session.get(
-        f"{api_url}/api/v1/Customers",
-        headers={'customerId': customerid}
-    )
-    response = response_object.json()
 
-    if not response["isError"]:
-        return response["item"]
+def get_accounts(http_session: requests.Session):
+    response_object = http_session.get(f"{api_url}/api/v2/Accounts")
+    response = handle_response_error(response_object)
+    return response['items']
+
+
+def handle_response_error(http_response):
+    if not http_response == 200:
+        try:
+            response = http_response.json()
+        except:
+            responseString = "Status code: {} {}"
+            response = responseString.format(http_response.status_code, http_response.reason)
     else:
-        raise RuntimeError("{} {}".format(response["errorType"], response["errorMessage"]))
-
-
-def get_accounts(http_session: requests.Session, customerid):
-    response_object = http_session.get(
-        f"{api_url}/api/v1/Accounts",
-        headers={'customerId': customerid}
-    )
-    response = response_object.json()
-
-    if not response["isError"]:
-        return response["items"]
-    else:
-        raise RuntimeError("{} {}".format(response["errorType"], response["errorMessage"]))
-
-
+        response = http_response.json()
+    return response
+   
 def main():
-    # enable_debug_logging()
+    #enable_debug_logging()
     import api_settings
     import pprint
 
     http_session = create_authenticated_http_session(api_settings.CLIENTID, api_settings.SECRET)
 
-    customer_info = get_customer_information(http_session, api_settings.CUSTOMERID)
+    customer_info = get_customer_information(http_session)
     pprint.pprint(customer_info)
 
-    accounts = get_accounts(http_session, api_settings.CUSTOMERID)
-    pprint.pprint(accounts)
-
+    #accounts = get_accounts(http_session)
+    #pprint.pprint(accounts)
 
 if __name__ == "__main__":
     main()
