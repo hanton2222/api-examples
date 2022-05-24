@@ -52,7 +52,7 @@ def handle_response_error(http_response):
     return response
    
 def main():
-    #enable_debug_logging()
+    # enable_debug_logging()
     import api_settings
     import pprint
 
@@ -61,8 +61,8 @@ def main():
     customer_info = get_customer_information(http_session)
     pprint.pprint(customer_info)
 
-    #accounts = get_accounts(http_session)
-    #pprint.pprint(accounts)
+    accounts = get_accounts(http_session)
+    pprint.pprint(accounts)
 
 if __name__ == "__main__":
     main()
