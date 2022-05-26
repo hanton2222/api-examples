@@ -41,7 +41,7 @@ def get_accounts(http_session: requests.Session):
 
 
 def handle_response_error(http_response):
-    if not http_response == 200:
+    if not http_response < 400:
         try:
             response = http_response.json()
         except:
